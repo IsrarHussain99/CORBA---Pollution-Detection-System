@@ -1,0 +1,30 @@
+#include "sensor.idl"
+
+module LMCentre{
+	
+	 struct AlarmClass{
+		long the_time; //the timestamp of the reading which triggered an alarm
+		long the_date; //the datestamp of the reading
+		string sensorString; //the name of the sensor which generated the reading
+		string zoneString; //the zone (LMC) this sensor/alarm was generated in
+		long sensor_level1; //the reading's first level
+		long sensor_level2; //the reading's second level
+		boolean isResolved; //whether the RMC has 'resolved' this alarm yet (read: sent notifications to RMCClients)
+		long alarmID; //the ArrayList index of this alarm (to retrieve and modify isResolved at a later time)
+
+	 };
+	
+	 typedef sequence<AlarmClass> Log; //defines an array to return in the interface below
+	 typedef long log_Count;
+     typedef sequence<string> ConnectedSensors; //defines an array to return in the interface below
+
+	 interface LMS{
+	 	readonly attribute string name; //the name of this LMS
+		attribute Log theLog; //the log of alarms it will store
+		attribute ConnectedSensors linkedSensors; //the log of linked sensors it will store
+	 	void CallAlarm(in AlarmClass aReading); //raise an alarm to send to the RMS and store locally
+	 	void newSensor(in RiverSensor::Sensor aSensor); //add a sensor to store locally
+	 	//string LMC_error "Error Processsing, - This LMC is not available (reconnect or try again)";
+
+	 }; 	
+};
